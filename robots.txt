@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://ecobubble.it/sitemap.xml
+Sitemap: https://www.ecobubble.it/sitemap.xml

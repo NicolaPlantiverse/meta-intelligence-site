@@ -9,4 +9,4 @@ By **EcoBubble** (Geo-Driven) and **Plantiverse** (Bio-Driven).
 - Self-contained: HTML + CSS + vanilla JS (canvas), no build step, no dependencies.
 
 ## Deploy
-Static hosting (GitHub Pages / Cloudflare Pages / Netlify). Production target: `ecobubble.it`.
+Static hosting (GitHub Pages / Cloudflare Pages / Netlify). Production target: `www.ecobubble.it`.
