@@ -91,7 +91,7 @@ h2{font-size:clamp(28px,4.2vw,52px);font-weight:700;letter-spacing:-.028em;line-
 #hero .lineage b{color:var(--txt2)}
 .hero-sub{margin-top:24px;max-width:640px}
 .hero-inner>*{opacity:0;animation:heroIn 1.7s cubic-bezier(.2,.6,.2,1) forwards}
-.hero-inner h1{animation-delay:.6s;animation-duration:2.6s}
+.hero-inner .lineage{animation-delay:.15s;animation-duration:1.6s}.hero-inner h1{animation-delay:1.15s;animation-duration:2.6s}
 .hero-inner .hero-sub{animation-delay:2.9s;animation-duration:2.4s}
 .hero-inner .hero-cue{animation-delay:4.4s}
 @keyframes heroIn{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
@@ -435,6 +435,7 @@ footer .sigrow{justify-content:flex-end}
 <section id="hero">
   <div id="brainWrap"><canvas id="brain"></canvas></div>
   <div class="hero-inner">
+    <div class="lineage"><b>ENNOUS</b> · Meta-Intelligence</div>
     <h1>Un'intelligenza<br>che governa l'intelligenza.</h1>
     <p class="lead hero-sub">Orchestrazione adattiva di modelli AI — per decisioni calibrate e verificabili.</p>
     <a class="hero-cue" href="#method">Il metodo</a>
