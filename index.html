@@ -111,6 +111,12 @@ h2{font-size:clamp(28px,4.2vw,52px);font-weight:700;letter-spacing:-.028em;line-
 .q .qn{font-size:13px;font-weight:700;color:var(--meta);font-variant-numeric:tabular-nums;margin-bottom:14px}
 .q p{font-size:16px;color:var(--txt);line-height:1.35;font-weight:600;letter-spacing:-.01em}
 .q span{display:block;font-size:13px;color:var(--txt2);margin-top:10px;line-height:1.55;font-weight:400}
+.q{cursor:pointer;position:relative;min-height:96px}
+.q span{max-height:0;opacity:0;margin-top:0;overflow:hidden;transition:max-height .45s cubic-bezier(.2,.6,.2,1),opacity .35s,margin-top .35s}
+.q.open span{max-height:260px;opacity:1;margin-top:10px}
+.q::after{content:"+";position:absolute;top:26px;right:20px;color:var(--meta);font-size:18px;line-height:1;transition:color .2s;pointer-events:none}
+.q.open::after{content:"–"}
+.q:focus-visible{outline:2px solid var(--meta);outline-offset:3px}
 @media(max-width:980px){.qgrid{grid-template-columns:1fr 1fr}}
 @media(max-width:560px){.qgrid{grid-template-columns:1fr}}
 .turn{margin-top:30px;font-size:clamp(19px,2.3vw,28px);line-height:1.4;font-weight:600;letter-spacing:-.02em;max-width:880px}
@@ -1175,6 +1181,10 @@ document.getElementById('arch').innerHTML=ARCH.map((l,idx)=>{const core=l[3]==='
     window.location.href='mailto:info@ecobubble.it?subject='+sub+'&body='+body;
   });
 })();
+</script>
+<script>
+/* Progressive disclosure: the five questions collapse by default, open on click/keyboard */
+(function(){document.querySelectorAll('#problem .q').forEach(function(c){c.setAttribute('tabindex','0');c.setAttribute('role','button');c.setAttribute('aria-expanded','false');function t(){var o=c.classList.toggle('open');c.setAttribute('aria-expanded',o?'true':'false');}c.addEventListener('click',t);c.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();t();}});});})();
 </script>
 </body>
 </html>
