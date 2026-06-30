@@ -561,7 +561,7 @@ footer .sigrow{justify-content:flex-end}
 <section id="levels">
   <div class="kicker rv">03 · I cinque livelli</div>
   <h2 class="rv d1">Cinque livelli. Due meta-layer.<br>Una catena chiusa e dimostrabile.</h2>
-  <p class="lead rv d2">Dal segnale grezzo a una decisione provata — ogni livello fa un mestiere, e i due meta-layer imparano trasversalmente.</p>
+  <p class="lead rv d2">Dal segnale sorgente a una decisione provata — ogni livello fa un mestiere, e i due meta-layer imparano trasversalmente.</p>
   <div class="arch rv d2" id="arch"></div>
   <div class="formula rv d3"><span class="f">A multi-objective score weighs accuracy against latency, energy and robustness — and runs only the optimal subset.</span><span class="pat">PATENT-PENDING</span></div>
 </section>
@@ -725,7 +725,7 @@ footer .sigrow{justify-content:flex-end}
 <!-- TEAM -->
 <section id="team">
   <div class="kicker rv">09 · Il team</div>
-  <h2 class="rv d1">Costruito da fisici e builder.</h2>
+  <h2 class="rv d1">Costruito da fisici e ingegneri.</h2>
   <p class="lead rv d2">
     Costruito tra fisica, geoscienze, AI, piattaforma e disclosure — ciascuno presidia un layer dell’architettura, e il
     tutto è stato portato sul campo con Plantiverse ed EcoBubble.
@@ -809,7 +809,7 @@ footer .sigrow{justify-content:flex-end}
 
 <script>
 /* ===== reveal ===== */
-const ro=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('on');ro.unobserve(e.target);}}),{threshold:.12});
+const ro=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('on');ro.unobserve(e.target);}}),{threshold:0,rootMargin:"0px 0px 120px 0px"});
 document.querySelectorAll('.rv').forEach(el=>ro.observe(el));
 
 /* ===== architecture rows (deposited L1-L5 + ML6/7) ===== */
