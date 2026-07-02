@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ennous · Piattaforma · Il secondo cervello</title>
+<style>
+:root{--bg:#06080a;--panel:rgba(10,14,17,.78);--line:#1b2328;--line2:#26313a;--txt:#e9eeea;--txt2:#a8b3ab;--txt3:#6d7972;
+--forest:#3fae6a;--cyan:#4cc3d9;--violet:#9b7fd4;--gold:#c9a23f;--pink:#e0608f;--red:#d46a6a}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{background:var(--bg);color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;overflow-x:hidden}
+.l-en{display:none}html.en .l-it{display:none}html.en .l-en{display:inline}
+nav{position:fixed;top:0;left:0;right:0;z-index:30;display:flex;align-items:center;gap:14px;padding:14px 3vw;
+background:linear-gradient(180deg,rgba(6,8,10,.9),rgba(6,8,10,0));pointer-events:none}
+nav>*{pointer-events:auto}
+.brand{color:var(--txt);text-decoration:none;letter-spacing:.06em}
+.brand b{font-size:14px}.brand span{display:block;font-size:10px;color:var(--txt3);letter-spacing:.2em}
+.badge{margin-left:auto;font-size:10px;letter-spacing:.12em;border:1px solid var(--line2);color:var(--txt2);border-radius:999px;padding:4px 10px}
+.langtog{background:transparent;border:1px solid var(--line2);color:rgba(255,255,255,.86);font-size:11px;font-weight:700;letter-spacing:.08em;padding:5px 11px;border-radius:999px;cursor:pointer;font-family:inherit;transition:.2s}
+.langtog:hover{border-color:var(--forest);color:var(--forest)}
+/* ===== STAGE ===== */
+#stage{position:relative;height:100vh;min-height:640px}
+#net{position:absolute;inset:0;width:100%;height:100%;cursor:grab;touch-action:none}
+#net.grabbing{cursor:grabbing}
+.intro{position:absolute;left:3vw;top:88px;z-index:12;max-width:430px;pointer-events:none}
+.intro .kick{font-size:11px;letter-spacing:.24em;color:var(--forest);font-weight:700;margin-bottom:10px}
+.intro h1{font-size:clamp(30px,4.2vw,52px);line-height:1.04;font-weight:800;letter-spacing:-.01em}
+.intro p{margin-top:14px;font-size:14.5px;line-height:1.65;color:var(--txt2)}
+.intro p b{color:var(--txt)}
+.ui{position:absolute;left:3vw;bottom:86px;z-index:12;display:flex;flex-direction:column;gap:10px;max-width:520px}
+.search{display:flex;align-items:center;gap:8px;background:var(--panel);border:1px solid var(--line2);border-radius:10px;padding:9px 12px;backdrop-filter:blur(10px)}
+.search svg{flex:none;opacity:.5}
+.search input{flex:1;background:transparent;border:0;outline:0;color:var(--txt);font-size:13.5px;font-family:inherit}
+.search input::placeholder{color:var(--txt3)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{background:var(--panel);border:1px solid var(--line2);color:var(--txt2);border-radius:999px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;backdrop-filter:blur(10px);transition:.2s}
+.chip:hover{border-color:var(--forest);color:var(--txt)}
+.chip.sel{border-color:var(--forest);color:#dff5e7;background:rgba(63,174,106,.14);box-shadow:0 0 18px -6px var(--forest)}
+.chip.ghost.sel{border-color:var(--red);background:rgba(212,106,106,.12);box-shadow:0 0 18px -6px var(--red);color:#f3dcdc}
+.bottombar{position:absolute;left:3vw;bottom:26px;z-index:12;display:flex;gap:22px;align-items:baseline;
+font-size:12px;color:var(--txt3);background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 16px;backdrop-filter:blur(10px)}
+.bottombar b{color:var(--forest);font-size:16px}
+.bottombar .warn b{color:var(--red)}
+.hint{position:absolute;right:3vw;bottom:26px;z-index:11;font-size:11px;color:var(--txt3);letter-spacing:.08em}
+/* preview panel */
+#panel{position:absolute;right:3vw;top:88px;z-index:14;width:300px;background:var(--panel);border:1px solid var(--line2);
+border-radius:14px;padding:16px;backdrop-filter:blur(14px);display:none;box-shadow:0 20px 60px -20px rgba(0,0,0,.8)}
+#panel.on{display:block;animation:pin .25s ease}
+@keyframes pin{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+#panel .fam{font-size:10px;font-weight:800;letter-spacing:.14em}
+#panel h3{font-size:16px;margin:4px 0 2px}
+#panel .st{font-size:11px;color:var(--txt3);margin-bottom:10px}
+#pMini{width:100%;height:120px;border:1px solid var(--line);border-radius:10px;background:rgba(0,0,0,.35)}
+#panel .cap{font-size:10px;color:var(--txt3);margin:5px 0 12px;letter-spacing:.06em}
+.bars{display:grid;grid-template-columns:auto 1fr auto;gap:6px 10px;align-items:center;font-size:11px;color:var(--txt2)}
+.bar{height:5px;border-radius:99px;background:rgba(255,255,255,.07);overflow:hidden}
+.bar i{display:block;height:100%;border-radius:99px}
+.escore{margin-top:12px;border-top:1px solid var(--line);padding-top:10px;font-size:12px;color:var(--txt2);display:flex;justify-content:space-between;align-items:baseline}
+.escore b{color:var(--gold);font-size:16px}
+#panel .hash{margin-top:10px;font-size:10px;color:var(--txt3);font-family:ui-monospace,Menlo,monospace;word-break:break-all}
+#panel .pips{margin-top:10px;display:flex;gap:6px;flex-wrap:wrap}
+#panel .pip{font-size:10px;border:1px solid var(--line2);color:var(--txt2);border-radius:99px;padding:2px 8px}
+#panel .pip.on{border-color:var(--forest);color:var(--forest)}
+#panel .close{position:absolute;top:10px;right:12px;background:none;border:0;color:var(--txt3);font-size:16px;cursor:pointer}
+#tip{position:absolute;z-index:13;display:none;background:var(--panel);border:1px solid var(--line2);border-radius:8px;
+padding:7px 10px;font-size:12px;pointer-events:none;backdrop-filter:blur(10px);white-space:nowrap}
+#tip span{display:block;font-size:10px;color:var(--txt3);margin-top:2px}
+/* ===== STRIP ===== */
+.strip{max-width:1200px;margin:0 auto;padding:70px 3vw 10px;display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.card{border:1px solid var(--line);border-radius:14px;padding:20px;background:#0a0e11;transition:.25s}
+.card:hover{border-color:rgba(63,174,106,.4);box-shadow:0 0 30px -14px var(--forest)}
+.card .n{color:var(--forest);font-weight:800;font-size:12px;letter-spacing:.14em;margin-bottom:8px}
+.card h3{font-size:15.5px;margin-bottom:8px}
+.card p{font-size:13px;color:var(--txt2);line-height:1.6}
+.card .f{margin-top:10px;font-size:11px;color:var(--gold);font-family:ui-monospace,Menlo,monospace}
+.method{max-width:1200px;margin:26px auto 0;padding:0 3vw}
+.method .disc{border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:10px;background:#0a0e11;padding:14px 18px;font-size:12.5px;color:var(--txt2);line-height:1.65}
+.method b{color:var(--txt)}
+footer{max-width:1200px;margin:0 auto;padding:44px 3vw 60px;color:var(--txt3);font-size:12px;display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
+@media(max-width:900px){.strip{grid-template-columns:1fr}.intro{max-width:74vw}#panel{width:260px;top:auto;bottom:150px}}
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="brand" href="#"><b>ENNOUS</b><span>META-INTELLIGENCE</span></a>
+  <span class="badge"><span class="l-it">PIATTAFORMA · DIMOSTRATIVA</span><span class="l-en">PLATFORM · DEMONSTRATION</span></span>
+  <button class="langtog" id="langTog">EN</button>
+</nav>
+
+<div id="stage">
+  <canvas id="net"></canvas>
+
+  <div class="intro">
+    <div class="kick"><span class="l-it">IL SECONDO CERVELLO</span><span class="l-en">THE SECOND BRAIN</span></div>
+    <h1><span class="l-it">Una rete<br>di reti.</span><span class="l-en">A network<br>of networks.</span></h1>
+    <p><span class="l-it">Ogni nodo è un motore analitico, e ogni motore è a sua volta una rete: la maglia interna è visibile in trasparenza.
+    <b>Trascina</b> per ruotare, <b>cerca</b> un motore, <b>scegli un obiettivo</b>: il gating accende solo il sottoinsieme che serve,
+    e ogni accensione lascia una prova.</span><span class="l-en">Every node is an analytical engine, and every engine is itself a network: the inner
+    mesh shows in transparency. <b>Drag</b> to rotate, <b>search</b> an engine, <b>pick an objective</b>: the gating ignites only the subset that matters,
+    and every ignition leaves a proof.</span></p>
+  </div>
+
+  <div class="ui">
+    <div class="search">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8b978f" stroke-width="2.4"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>
+      <input id="q" autocomplete="off" spellcheck="false">
+    </div>
+    <div class="chips" id="chips"></div>
+  </div>
+
+  <div class="bottombar" id="bottombar"></div>
+  <div class="hint"><span class="l-it">trascina · rotella per zoom · clic su un nodo</span><span class="l-en">drag · wheel to zoom · click a node</span></div>
+
+  <div id="panel">
+    <button class="close" onclick="closePanel()">×</button>
+    <div class="fam" id="pFam"></div>
+    <h3 id="pName"></h3>
+    <div class="st" id="pSt"></div>
+    <canvas id="pMini"></canvas>
+    <div class="cap"><span class="l-it">LA RETE DENTRO IL NODO · anteprima</span><span class="l-en">THE NETWORK INSIDE THE NODE · preview</span></div>
+    <div class="bars" id="pBars"></div>
+    <div class="escore"><span>E(M<sub>i</sub>) · <span class="l-it">punteggio di gating</span><span class="l-en">gating score</span></span><b id="pE"></b></div>
+    <div class="pips" id="pPips"></div>
+    <div class="hash" id="pHash"></div>
+  </div>
+  <div id="tip"></div>
+</div>
+
+<div class="strip">
+  <div class="card"><div class="n">01</div>
+    <h3><span class="l-it">Ogni nodo è una rete</span><span class="l-en">Every node is a network</span></h3>
+    <p><span class="l-it">Non un modello più grande: la composizione orchestrata di molti modelli specialisti. Il percorso va dai dati, passa per i motori accesi, converge nella meta-fusione e arriva alla decisione.</span><span class="l-en">Not a bigger model: the orchestrated composition of many specialist models. The path starts at the data, passes through the ignited engines, converges in the meta-fusion and reaches the decision.</span></p></div>
+  <div class="card"><div class="n">02</div>
+    <h3><span class="l-it">Il gating accende il necessario</span><span class="l-en">The gating ignites what is needed</span></h3>
+    <p><span class="l-it">Per ogni obiettivo, una selezione a budget vincolato sceglie ~1 motore su 10 e mette a riposo gli altri: il calcolo scende dell'80–90% e la confidenza resta misurata.</span><span class="l-en">For each objective, budget-constrained selection picks ~1 engine in 10 and idles the rest: compute drops by 80–90% while confidence stays measured.</span></p>
+    <div class="f">E(Mᵢ) = α·Acc − β·Lat − γ·En + δ·Rob</div></div>
+  <div class="card"><div class="n">03</div>
+    <h3><span class="l-it">Ogni accensione lascia prova</span><span class="l-en">Every ignition leaves proof</span></h3>
+    <p><span class="l-it">L'audit è preso al passo di selezione del modello, in una catena di hash tamper-evident: ogni decisione è ripercorribile fino al dato, per costruzione.</span><span class="l-en">The audit is taken at the step of model selection, in a tamper-evident hash chain: every decision is retraceable to the data, by construction.</span></p>
+    <div class="f">sha256 · hash-chained</div></div>
+</div>
+
+<div class="method">
+  <div class="disc"><b><span class="l-it">Che cosa è reale.</span><span class="l-en">What is real.</span></b>
+  <span class="l-it">Il mondo mostrato qui è dimostrativo; la pipeline che seleziona, misura e firma è reale: backtest su 6.745 decisioni, copertura conformal 0,894 contro un target di 0,90, risparmio di calcolo misurato sopra l'80% rispetto all'esecuzione dell'intero catalogo. Architettura depositata (brevetto 11.E2118.12.IT.7, pending, +5 estensioni tecniche candidate).</span><span class="l-en">The world shown here is demonstrative; the pipeline that selects, measures and signs is real: backtest over 6,745 decisions, conformal coverage 0.894 against a 0.90 target, measured compute saving above 80% versus running the whole catalogue. Deposited architecture (patent 11.E2118.12.IT.7, pending, +5 candidate technical extensions).</span></div>
+</div>
+
+<footer>
+  <span>ENNOUS · Meta-Intelligence Lab · Plant &amp; Geo-Driven Systems</span>
+  <span><span class="l-it">v0.1 · 2026 · dimostrazione riservata</span><span class="l-en">v0.1 · 2026 · confidential demonstration</span></span>
+</footer>
+
+<script>
+'use strict';
+const T=(it,en)=>document.documentElement.classList.contains('en')?en:it;
+const rand=Math.random;
+
+/* ===== catalogue: 100 engines, 4 families in spatial lobes ===== */
+const BASE=[
+ 'Kalman filter','EWMA trend','Theta forecaster','Ridge ARX','GBoost regressor','Random Forest','GP regressor','PINN dynamics',
+ 'Physical twin','Survival model','Quantile GBM','Wavelet analyser','Holt-Winters','KNN local','Kernel smoother','Diurnal profile',
+ 'Spectral ViT','CNN structure','Anomaly autoencoder','Isolation forest','Sequence transformer','LSTM sequence','Graph velocity','Change-point sentinel',
+ 'GNN relational','Counterparty graph','Provenance tracker','Taxonomy classifier','LLM drafter','Entity resolver','Knowledge indexer','Ontology mapper',
+ 'Bayesian scorer','Conformal calibrator','Scenario Monte Carlo','Stress replay','Portfolio scorer','Robustness prober','Decision ranker','Budget optimiser'
+];
+const FAMC={g:[63,174,106],c:[76,195,217],v:[155,127,212],o:[201,162,63],m:[224,96,143]};
+const FAMN={g:'PREDICTIVE',c:'PERCEPTION · ANOMALY',v:'KNOWLEDGE · LANGUAGE',o:'DECISION · PORTFOLIO',m:'META-LAYER'};
+const N=100,R=235;
+const nodes=[];
+(function build(){
+  const pts=[];
+  for(let i=0;i<N;i++){const t=(i+0.5)/N,y=1-2*t,r=Math.sqrt(Math.max(0,1-y*y)),th=i*2.399963229;
+    pts.push([Math.cos(th)*r*R, y*R*0.84, Math.sin(th)*r*R]);}
+  pts.sort((a,b)=>Math.atan2(a[2],a[0])-Math.atan2(b[2],b[0]));
+  for(let i=0;i<N;i++){
+    const fam=i<30?'g':i<55?'c':i<78?'v':'o';
+    const nm=BASE[i%BASE.length]+(i>=BASE.length?' · '+(['II','III'][Math.floor(i/BASE.length)-1]||'IV'):'');
+    let s=(i*2654435761)>>>0; const rnd=()=>{s=(s*1103515245+12345)>>>0;return s/4294967296;};
+    const k=5+Math.floor(rnd()*3),sat=[],se=[];
+    for(let j=0;j<k;j++){const u=rnd()*2-1,a=rnd()*6.2832,rr=6.5+rnd()*6,q=Math.sqrt(1-u*u);
+      sat.push([Math.cos(a)*q*rr,u*rr,Math.sin(a)*q*rr]);}
+    for(let j=0;j<k;j++)se.push([j,(j+1)%k]); if(k>4)se.push([0,k>>1]);
+    nodes.push({i,name:nm,fam,pos:pts[i],sat,se,ph:rnd()*6.2832,sp:.4+rnd()*.9,
+      acc:.76+((i*37)%20)/100, lat:.15+((i*53)%55)/100, en:.12+((i*29)%50)/100, rob:.62+((i*17)%30)/100});
+  }
+})();
+const SRC=[[-560,-150,40],[-590,0,-30],[-560,150,20]];
+const FUS=[350,0,0], HUB=[505,0,0];
+function mlPos(t){return [[120*Math.cos(t*.35),-330,120*Math.sin(t*.35)],[140*Math.cos(t*.28+3),330,140*Math.sin(t*.28+3)]];}
+/* family chains for lobe structure */
+const chains=[];
+for(let i=1;i<N;i++) if(nodes[i].fam===nodes[i-1].fam) chains.push([i-1,i]);
+
+/* ===== objectives ===== */
+function subset(seed,n){const set=new Set();let s=seed>>>0;while(set.size<n){s=(s*1103515245+12345)>>>0;set.add(s%N);}return set;}
+const OBJS=[
+ {id:'credit', it:'◷ Credito', en:'◷ Credit', n:11, seed:7,  save:'−87%'},
+ {id:'fraud',  it:'⚡ Frodi',   en:'⚡ Fraud',  n:7,  seed:23, save:'−92%'},
+ {id:'esg',    it:'◆ ESG',     en:'◆ ESG',    n:12, seed:41, save:'−84%'},
+ {id:'compl',  it:'⌑ Compliance', en:'⌑ Compliance', n:12, seed:61, save:'−85%'},
+ {id:'all',    it:'⨯ Senza gating', en:'⨯ No gating', n:N, seed:0, save:'−0%', ghost:true}
+];
+OBJS.forEach(o=>o.set=o.id==='all'?new Set(nodes.map(n=>n.i)):subset(o.seed,o.n));
+let cur=0, igniteAt=new Map(), selNode=-1, hoverNode=-1, Q='';
+
+/* ===== canvas ===== */
+const cv=document.getElementById('net'),ctx=cv.getContext('2d');
+let W=0,H=0,DPR=1,CX=0,CY=0,zoom=1;
+const FOCAL=780;
+function resize(){DPR=Math.min(2,window.devicePixelRatio||1);W=cv.clientWidth;H=cv.clientHeight;
+ cv.width=W*DPR;cv.height=H*DPR;CX=W*0.55;CY=H*0.5;zoom=Math.min(W/1250,H/860)*1.06;if(zoom<0.5)zoom=0.5;}
+window.addEventListener('resize',resize);resize();
+
+let ax=-0.14,ay=0.16,vx=0,vy=0,drag=false,lx=0,ly=0,wheelZ=0.88;
+function rot(p){const cy=Math.cos(ay),sy=Math.sin(ay),cx=Math.cos(ax),sx=Math.sin(ax);
+ const x=p[0]*cy+p[2]*sy;let z=-p[0]*sy+p[2]*cy;const y=p[1]*cx-z*sx;z=p[1]*sx+z*cx;return [x,y,z];}
+function proj(p){const q=rot(p);const s=FOCAL/(FOCAL+q[2])*zoom*wheelZ;return {x:CX+q[0]*s,y:CY+q[1]*s,s,z:q[2]};}
+const rgba=(c,a)=>`rgba(${c[0]},${c[1]},${c[2]},${a})`;
+const mix=(a,b,t)=>[a[0]+(b[0]-a[0])*t|0,a[1]+(b[1]-a[1])*t|0,a[2]+(b[2]-a[2])*t|0];
+
+/* dust */
+const DUST=[];for(let i=0;i<150;i++){const u=rand()*2-1,a=rand()*6.2832,rr=R*1.9+rand()*R*2.4,q=Math.sqrt(1-u*u);
+ DUST.push([Math.cos(a)*q*rr,u*rr*0.8,Math.sin(a)*q*rr]);}
+
+/* particles along source→engine→fusion→hub */
+let parts=[];
+function spawn(t){const o=OBJS[cur];if(parts.length>=30||rand()>0.4)return;
+ const act=[...o.set];const idx=act[Math.floor(rand()*act.length)];
+ if((performance.now()-(igniteAt.get(idx)||0))<0)return;
+ parts.push({seg:0,t:0,path:[SRC[idx%3],nodes[idx].pos,FUS,HUB],col:FAMC[nodes[idx].fam]});}
+
+function setObj(i){cur=i;const o=OBJS[i];igniteAt.clear();parts=[];
+ const now=performance.now();
+ o.set.forEach(idx=>{const d=(nodes[idx].pos[0]+560)/1060;igniteAt.set(idx,now+d*850+rand()*260);});
+ document.querySelectorAll('.chip').forEach((c,j)=>c.classList.toggle('sel',j===i));
+ renderBottom();if(selNode>=0)renderPanel(selNode);}
+function lit(idx){const t0=igniteAt.get(idx);if(t0===undefined)return 0;
+ return Math.max(0,Math.min(1,(performance.now()-t0)/420));}
+
+/* ===== draw ===== */
+let PICK=[];
+function frame(){
+ const t=performance.now()/1000;
+ if(!drag){ay+=0.0011+vy;ax+=vx;vx*=.94;vy*=.94;ax=Math.max(-1.2,Math.min(1.2,ax));}
+ ctx.setTransform(DPR,0,0,DPR,0,0);ctx.clearRect(0,0,W,H);
+ const ML=mlPos(t);
+ PICK=[];
+ /* dust */
+ ctx.globalCompositeOperation='source-over';
+ for(const d of DUST){const p=proj(d);if(p.s<=0)continue;ctx.fillStyle=`rgba(140,165,150,${0.05+0.05*p.s})`;
+  ctx.beginPath();ctx.arc(p.x,p.y,0.8*p.s+0.2,0,7);ctx.fill();}
+ /* project all */
+ const P=nodes.map(n=>proj(n.pos));
+ const pS=SRC.map(proj),pF=proj(FUS),pH=proj(HUB),pM=ML.map(proj);
+ const o=OBJS[cur];
+ const qOn=Q.length>0;
+ const dimF=idx=>{if(!qOn)return 1;return nodes[idx].name.toLowerCase().includes(Q)?1:0.13;};
+ /* edges: family chains */
+ ctx.lineWidth=0.7;
+ for(const [a,b] of chains){const A=P[a],B=P[b];const on=(lit(a)>0.6&&lit(b)>0.6);
+  const al=(on?0.22:0.05)*Math.min(dimF(a),dimF(b))*Math.min(A.s,B.s);
+  ctx.strokeStyle=rgba(FAMC[nodes[a].fam],al);ctx.beginPath();ctx.moveTo(A.x,A.y);ctx.lineTo(B.x,B.y);ctx.stroke();}
+ /* edges: source→engine + engine→fusion (active only, plus faint all) */
+ for(let i=0;i<N;i++){const L=lit(i),A=P[i];const df=dimF(i);
+  const sp=pS[i%3];
+  ctx.strokeStyle=L>0?rgba(FAMC.o,0.16*L*df):'rgba(255,255,255,0.018)';
+  ctx.beginPath();ctx.moveTo(sp.x,sp.y);ctx.lineTo(A.x,A.y);ctx.stroke();
+  ctx.strokeStyle=L>0?rgba(FAMC.o,0.2*L*df):'rgba(255,255,255,0.018)';
+  ctx.beginPath();ctx.moveTo(A.x,A.y);ctx.lineTo(pF.x,pF.y);ctx.stroke();}
+ /* fusion→hub, meta links */
+ ctx.lineWidth=1.5;ctx.strokeStyle=rgba(FAMC.o,0.6);
+ ctx.beginPath();ctx.moveTo(pF.x,pF.y);ctx.lineTo(pH.x,pH.y);ctx.stroke();
+ ctx.lineWidth=0.8;ctx.setLineDash([3,5]);
+ pM.forEach(pm=>{ctx.strokeStyle=rgba(FAMC.m,0.3);ctx.beginPath();ctx.moveTo(pm.x,pm.y);ctx.lineTo(pF.x,pF.y);ctx.stroke();});
+ ctx.setLineDash([]);
+ /* engine nodes, far→near */
+ const order=nodes.map((n,i)=>i).sort((a,b)=>P[b].z-P[a].z);
+ ctx.globalCompositeOperation='lighter';
+ for(const i of order){const n=nodes[i],p=P[i];if(p.s<=0)continue;
+  const L=lit(i),df=dimF(i),col=FAMC[n.fam];
+  const base=4.2*p.s,rad=base*(1+0.9*L)+(i===selNode?2.5:0);
+  const a=(0.18+0.8*L)*df;
+  if(L>0||df>0.5){const g=ctx.createRadialGradient(p.x,p.y,1,p.x,p.y,rad*3.2);
+   g.addColorStop(0,rgba(col,0.5*a));g.addColorStop(1,rgba(col,0));
+   ctx.fillStyle=g;ctx.beginPath();ctx.arc(p.x,p.y,rad*3.2,0,7);ctx.fill();}
+  ctx.globalCompositeOperation='source-over';
+  ctx.fillStyle='rgba(7,10,12,.9)';ctx.beginPath();ctx.arc(p.x,p.y,rad,0,7);ctx.fill();
+  ctx.strokeStyle=rgba(L>0?col:mix(col,[120,130,125],0.6),(0.25+0.75*L)*df);
+  ctx.lineWidth=L>0?1.3:0.8;ctx.stroke();
+  /* inner mesh: rotate satellites around local Y */
+  const ca=Math.cos(t*n.sp+n.ph),sa=Math.sin(t*n.sp+n.ph);
+  const sp2=n.sat.map(sv=>{const x=sv[0]*ca+sv[2]*sa,z=-sv[0]*sa+sv[2]*ca;
+   const q=proj([n.pos[0]+x,n.pos[1]+sv[1],n.pos[2]+z]);return q;});
+  ctx.lineWidth=0.55;ctx.strokeStyle=rgba(col,(L>0?0.5:0.12)*df);
+  for(const [a1,b1] of n.se){ctx.beginPath();ctx.moveTo(sp2[a1].x,sp2[a1].y);ctx.lineTo(sp2[b1].x,sp2[b1].y);ctx.stroke();}
+  ctx.fillStyle=rgba(col,(L>0?0.85:0.25)*df);
+  for(const q of sp2){ctx.beginPath();ctx.arc(q.x,q.y,(L>0?1.4:0.9)*p.s,0,7);ctx.fill();}
+  ctx.globalCompositeOperation='lighter';
+  PICK.push({x:p.x,y:p.y,r:Math.max(10,rad*2.4),idx:i});
+  if(qOn&&df===1){ctx.globalCompositeOperation='source-over';
+   ctx.fillStyle=rgba(mix(col,[255,255,255],0.5),0.9);ctx.font='600 10px -apple-system';
+   ctx.fillText(n.name,p.x+rad+5,p.y-rad-2);ctx.globalCompositeOperation='lighter';}
+  if(i===selNode){ctx.globalCompositeOperation='source-over';ctx.strokeStyle='#fff';ctx.lineWidth=1.1;
+   ctx.beginPath();ctx.arc(p.x,p.y,rad+5+Math.sin(t*3)*1.5,0,7);ctx.stroke();ctx.globalCompositeOperation='lighter';}
+ }
+ ctx.globalCompositeOperation='source-over';
+ /* specials */
+ pS.forEach((p,i)=>{ctx.fillStyle='rgba(255,255,255,.5)';ctx.beginPath();ctx.arc(p.x,p.y,3*p.s,0,7);ctx.fill();});
+ /* fusion: rotating squares */
+ ctx.save();ctx.translate(pF.x,pF.y);ctx.rotate(t*.5);ctx.strokeStyle=rgba(FAMC.o,.95);ctx.lineWidth=1.4;
+ const fs=10*pF.s;ctx.strokeRect(-fs,-fs,fs*2,fs*2);ctx.rotate(Math.PI/4);ctx.strokeStyle=rgba(FAMC.o,.45);ctx.strokeRect(-fs,-fs,fs*2,fs*2);ctx.restore();
+ /* hub: hexagon + glow */
+ const hr=(13+Math.sin(t*1.6)*1.4)*pH.s;
+ const hg=ctx.createRadialGradient(pH.x,pH.y,2,pH.x,pH.y,hr*3);hg.addColorStop(0,'rgba(63,174,106,.55)');hg.addColorStop(1,'rgba(63,174,106,0)');
+ ctx.fillStyle=hg;ctx.beginPath();ctx.arc(pH.x,pH.y,hr*3,0,7);ctx.fill();
+ ctx.fillStyle='#3fae6a';ctx.beginPath();
+ for(let a2=0;a2<6;a2++){const an=a2*Math.PI/3-Math.PI/6,x=pH.x+Math.cos(an)*hr,y=pH.y+Math.sin(an)*hr;a2?ctx.lineTo(x,y):ctx.moveTo(x,y);}
+ ctx.closePath();ctx.fill();
+ /* meta nodes */
+ pM.forEach((p,i)=>{const col=FAMC.m;const g=ctx.createRadialGradient(p.x,p.y,1,p.x,p.y,26*p.s);
+  g.addColorStop(0,rgba(col,.5));g.addColorStop(1,rgba(col,0));ctx.fillStyle=g;
+  ctx.beginPath();ctx.arc(p.x,p.y,26*p.s,0,7);ctx.fill();
+  ctx.fillStyle=rgba(col,.95);ctx.beginPath();ctx.arc(p.x,p.y,4.5*p.s,0,7);ctx.fill();
+  PICK.push({x:p.x,y:p.y,r:16,idx:-2-i});});
+ /* labels */
+ ctx.font='600 10px -apple-system';ctx.textAlign='center';
+ const lab=(p,txt,dy)=>{ctx.fillStyle=`rgba(255,255,255,${0.32+0.3*Math.min(1,p.s)})`;ctx.fillText(txt,p.x,p.y+dy);};
+ lab(pS[1],'DATA · L1',-16);lab(pF,'META-FUSION · L4',26);lab(pH,'DECISION HUB · L5',30);
+ lab(pM[0],'ML7 · DRIFT',-14);lab(pM[1],'ML6 · TRANSFER',20);
+ ctx.textAlign='left';
+ /* particles */
+ spawn(t);
+ parts=parts.filter(pt=>{pt.t+=0.02;if(pt.t>=1){pt.seg++;pt.t=0;if(pt.seg>=pt.path.length-1)return false;}
+  const A=pt.path[pt.seg],B=pt.path[pt.seg+1];const e=pt.t*pt.t*(3-2*pt.t);
+  const w=[A[0]+(B[0]-A[0])*e,A[1]+(B[1]-A[1])*e,A[2]+(B[2]-A[2])*e];const p=proj(w);
+  ctx.fillStyle=rgba(pt.col,.95);ctx.beginPath();ctx.arc(p.x,p.y,2.1*p.s,0,7);ctx.fill();
+  ctx.fillStyle=rgba(pt.col,.3);ctx.beginPath();ctx.arc(p.x,p.y,4.6*p.s,0,7);ctx.fill();return true;});
+ requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+
+/* ===== interaction ===== */
+cv.addEventListener('pointerdown',e=>{drag=true;cv.classList.add('grabbing');lx=e.clientX;ly=e.clientY;vx=vy=0;cv.setPointerCapture(e.pointerId);});
+window.addEventListener('pointerup',()=>{drag=false;cv.classList.remove('grabbing');});
+cv.addEventListener('pointermove',e=>{const r=cv.getBoundingClientRect(),mx=e.clientX-r.left,my=e.clientY-r.top;
+ if(drag){const dx=e.clientX-lx,dy=e.clientY-ly;lx=e.clientX;ly=e.clientY;
+  ay+=dx*0.0052;ax+=dy*0.0052;ax=Math.max(-1.2,Math.min(1.2,ax));vy=dx*0.00035;vx=dy*0.00035;return;}
+ let best=-1,bd=1e9,bi=null;
+ for(const pk of PICK){const d=(pk.x-mx)**2+(pk.y-my)**2;if(d<pk.r*pk.r&&d<bd){bd=d;best=pk.idx;bi=pk;}}
+ hoverNode=best;const tip=document.getElementById('tip');
+ if(best>=0){const n=nodes[best],on=lit(best)>0.5;
+  tip.style.display='block';tip.style.left=Math.min(W-190,bi.x+16)+'px';tip.style.top=(bi.y+18)+'px';
+  tip.innerHTML=n.name+'<span>'+(on?T('attivo · selezionato dal gating','active · selected by gating'):T('in attesa · sotto la soglia E(Mᵢ)','on standby · below the E(Mᵢ) threshold'))+'</span>';}
+ else if(best<=-2){tip.style.display='block';tip.style.left=Math.min(W-190,bi.x+16)+'px';tip.style.top=(bi.y+18)+'px';
+  tip.innerHTML=(best===-2?'ML7 · drift sentinel':'ML6 · warm-start')+'<span>'+T('meta-livello · impara dal sistema','meta-level · learns from the system')+'</span>';}
+ else tip.style.display='none';});
+cv.addEventListener('pointerleave',()=>{document.getElementById('tip').style.display='none';});
+cv.addEventListener('click',()=>{if(hoverNode>=0){selNode=hoverNode;renderPanel(selNode);}});
+cv.addEventListener('wheel',e=>{e.preventDefault();wheelZ*=e.deltaY<0?1.07:0.93;wheelZ=Math.max(0.55,Math.min(2.2,wheelZ));},{passive:false});
+
+/* ===== panel ===== */
+function fnv(s){let h=2166136261>>>0;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)>>>0;}return h.toString(16).padStart(8,'0');}
+function renderPanel(i){const n=nodes[i],col=FAMC[n.fam];const pan=document.getElementById('panel');pan.classList.add('on');
+ document.getElementById('pFam').textContent=FAMN[n.fam];document.getElementById('pFam').style.color=rgba(col,1);
+ document.getElementById('pName').textContent=n.name;
+ const on=OBJS[cur].set.has(i);
+ document.getElementById('pSt').textContent=on?T('ATTIVO · acceso dal gating per «'+objLabel(cur)+'»','ACTIVE · ignited by the gating for “'+objLabel(cur)+'”')
+  :T('IN ATTESA · sotto la soglia per «'+objLabel(cur)+'»','ON STANDBY · below the threshold for “'+objLabel(cur)+'”');
+ const bars=[[T('accuratezza','accuracy'),n.acc,'#3fae6a'],[T('latenza','latency'),n.lat,'#4cc3d9'],[T('energia','energy'),n.en,'#c9a23f'],[T('robustezza','robustness'),n.rob,'#9b7fd4']];
+ document.getElementById('pBars').innerHTML=bars.map(b=>`<span>${b[0]}</span><div class="bar"><i style="width:${(b[1]*100)|0}%;background:${b[2]}"></i></div><span>${(b[1]*100)|0}</span>`).join('');
+ const E=(0.55*n.acc-0.2*n.lat-0.15*n.en+0.2*n.rob);
+ document.getElementById('pE').textContent=E.toFixed(3);
+ document.getElementById('pPips').innerHTML=OBJS.slice(0,4).map((o,j)=>`<span class="pip${o.set.has(i)?' on':''}">${T(o.it,o.en).slice(2)}</span>`).join('');
+ document.getElementById('pHash').textContent='provenance sha256:'+fnv(n.name)+fnv(n.name+'x')+fnv(n.name+'y')+'…';
+ miniLoop(n);}
+function objLabel(i){return T(OBJS[i].it,OBJS[i].en).slice(2);}
+function closePanel(){selNode=-1;document.getElementById('panel').classList.remove('on');}
+let miniN=null;
+function miniLoop(n){miniN=n;}
+(function miniDraw(){const c=document.getElementById('pMini');
+ if(miniN&&c.clientWidth){const d=Math.min(2,window.devicePixelRatio||1);
+  if(c.width!==c.clientWidth*d){c.width=c.clientWidth*d;c.height=c.clientHeight*d;}
+  const g=c.getContext('2d');g.setTransform(d,0,0,d,0,0);g.clearRect(0,0,c.clientWidth,c.clientHeight);
+  const t=performance.now()/1000,col=FAMC[miniN.fam],cx=c.clientWidth/2,cy2=c.clientHeight/2,sc=4.6;
+  const ca=Math.cos(t*miniN.sp+miniN.ph),sa=Math.sin(t*miniN.sp+miniN.ph);
+  const pp=miniN.sat.map(sv=>{const x=sv[0]*ca+sv[2]*sa;return [cx+x*sc,cy2+sv[1]*sc];});
+  g.lineWidth=0.8;g.strokeStyle=rgba(col,.6);
+  for(const [a,b] of miniN.se){g.beginPath();g.moveTo(pp[a][0],pp[a][1]);g.lineTo(pp[b][0],pp[b][1]);g.stroke();}
+  g.fillStyle=rgba(col,.95);for(const p of pp){g.beginPath();g.arc(p[0],p[1],2.4,0,7);g.fill();}
+  const gg=g.createRadialGradient(cx,cy2,2,cx,cy2,46);gg.addColorStop(0,rgba(col,.12));gg.addColorStop(1,rgba(col,0));
+  g.fillStyle=gg;g.beginPath();g.arc(cx,cy2,46,0,7);g.fill();}
+ requestAnimationFrame(miniDraw);})();
+
+/* ===== chips / bottombar / search / i18n ===== */
+function buildChips(){const box=document.getElementById('chips');box.innerHTML='';
+ OBJS.forEach((o,i)=>{const b=document.createElement('button');b.className='chip'+(o.ghost?' ghost':'')+(i===cur?' sel':'');
+  b.textContent=T(o.it,o.en);b.onclick=()=>setObj(i);box.appendChild(b);});}
+function renderBottom(){const o=OBJS[cur];const el=document.getElementById('bottombar');
+ const full=o.id==='all';
+ el.innerHTML=`<span class="${full?'warn':''}"><b>${o.n}</b>/100 ${T('motori accesi','engines ignited')}</span>
+ <span>${T('copertura conformal','conformal coverage')} <b>0,90</b></span>
+ <span class="${full?'warn':''}">${T('calcolo','compute')} <b>${o.save}</b></span>
+ ${full?`<span class="warn">${T('è ciò che accade senza orchestrazione','this is what happens without orchestration')}</span>`:''}`;}
+document.getElementById('q').addEventListener('input',e=>{Q=e.target.value.trim().toLowerCase();});
+function setPlaceholder(){document.getElementById('q').placeholder=T('cerca un motore… (es. kalman, graph, conformal)','search an engine… (e.g. kalman, graph, conformal)');}
+window.renderI18n=function(){buildChips();renderBottom();setPlaceholder();if(selNode>=0)renderPanel(selNode);};
+(function(){var b=document.getElementById('langTog');
+ function setLang(l){document.documentElement.classList.toggle('en',l==='en');b.textContent=l==='en'?'IT':'EN';
+  try{localStorage.ennousPlatLang=l;}catch(e){}window.renderI18n();}
+ b.onclick=function(){setLang(document.documentElement.classList.contains('en')?'it':'en');};
+ var s='it';try{s=localStorage.ennousPlatLang||'it';}catch(e){}setLang(s);})();
+buildChips();setObj(0);setPlaceholder();
+const hh={credit:0,fraud:1,esg:2,compl:3,all:4}[location.hash.slice(1)];if(hh!==undefined)setObj(hh);
+</script>
+</body>
+</html>
